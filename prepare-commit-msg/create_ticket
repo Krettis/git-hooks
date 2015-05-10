@@ -1,0 +1,56 @@
+#!/bin/sh
+
+
+function create_ticket_prefix
+{
+	# This way you can customize which branches should be skipped when
+	# prepending commit message. 
+	if [ -z "$BRANCHES_TO_SKIP" ]; then
+		BRANCHES_TO_SKIP=(master develop test)
+	fi
+	 
+	BRANCH_NAME=$(git symbolic-ref --short HEAD)
+	BRANCH_NAME="${BRANCH_NAME##*/}"
+	 
+	BRANCH_EXCLUDED=$(printf "%s\n" "${BRANCHES_TO_SKIP[@]}" | grep -c "^$BRANCH_NAME$")
+	BRANCH_IN_COMMIT=$(grep -c "\[$BRANCH_NAME\]" $1)
+	 
+	if [ -n "$BRANCH_NAME" ] && ! [[ $BRANCH_EXCLUDED -eq 1 ]] && ! [[ $BRANCH_IN_COMMIT -ge 1 ]]; then 
+
+		local type_commit="[F|P|H|A|M]"
+		local hostcode="[G|B|g|b]"
+		local nr="[0-9]{2,4}"
+		local regex="^[a-zA-Z]+-${type_commit}-${hostcode}${nr}"
+
+		local trimmed=$(echo $BRANCH_NAME | egrep -o "$regex" | sed -e \
+			'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/')
+
+		local pcode=$(git config --local hookie.project.code)
+		local phost=$(git config --local hookie.project.host)
+		local hostletter=
+		local number=$(echo $trimmed | egrep -o "[0-9]+" )
+		local commitletter=$(echo $trimmed | grep -o "\-${type_commit}\-" | grep -o "$type_commit")
+		if [ "$phost" == "github" ]; then
+			hostletter="G"
+		elif [ "$phost" == "bitbucket" ]; then
+			hostletter="B"
+		fi
+
+		local ticket="[$pcode-$commitletter-$hostletter$number]"
+		sed -i.bak -e "1s/^/$ticket /" $1
+	fi
+}
+
+
+
+case "${1}" in
+    --about )
+        echo "Pre push a ticket based off the branch name"
+        ;;
+    * )
+        source ${HOME}/.git_hooks/helpers/get_config
+        if use_ticket ; then 
+            create_ticket_prefix "$@"
+        fi
+        ;;
+esac

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+function check_project_config
+{
+	# keys
+	local key_project_host="project.host"
+	local key_project_code="project.code"
+
+	# values
+	local project_host=$(get_config "$key_project_host")
+	local project_code=$(get_config "$key_project_code")
+	local ticket=$(get_config "ticket")
+
+	if [ "$ticket" == "" ] && [ "$project_code" != "" ] && [ "$project_host" != "" ]; then
+		local ticket="$project_code-XX-"
+		local hostletter=
+		if [ $project_host == "github" ]; then
+			hostletter="G"
+		elif [ $project_host == "bitbucket" ]; then
+			hostletter="B"
+		else
+			project_host=
+		fi
+
+		ticket+=$hostletter
+	fi
+
+
+	if [ -z "$project_host" ]; then
+		list+="- project host "$(colorize "(--local hookie.$key_project_host)\n")
+	fi
+
+	if [ -z "$project_code" ]; then
+		list+="- project code "$(colorize "(--local hookie.$key_project_code)\n")
+	fi
+	echo "$list"
+}

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function lint_travis
+{
+	#Run travis lint when your .travis.yml changes
+	#This own't work if travis CLI isn't installed
+	#Note that I require bash, not sh
+	if grep --quiet ".travis.yml" <( git diff --name-only --cached )
+	then
+		travis-lint &> /dev/null
+		if [ $? -ne 0 ]; then  { 
+			source $HOME/.git_hooks/helpers/.colorize
+			local text="Travis lint fail"
+			local errorMessage=$(colorize "red" "$text")
+			echo "$errorMessage"	
+			exit 1
+		} fi
+	fi
+}
+
+case "${1}" in
+	--about )
+		echo "Linting on the travis file"
+		;;
+	* )
+		lint_travis
+		;;
+esac

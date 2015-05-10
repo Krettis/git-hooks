@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function use_ticket
+{
+	local use_it=$(git config --local hookie.ticket.use)
+	if [ "$use_it" == "1" ] || [ "$use_it" == "true" ]; then
+			return 0
+	else
+			return 1
+	fi
+}

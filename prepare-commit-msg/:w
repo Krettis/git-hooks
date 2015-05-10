@@ -1,0 +1,68 @@
+#!/bin/sh
+
+
+function create_ticket_prefix
+{
+	# This way you can customize which branches should be skipped when
+	# prepending commit message. 
+	if [ -z "$BRANCHES_TO_SKIP" ]; then
+		BRANCHES_TO_SKIP=(master develop test)
+	fi
+	 
+	BRANCH_NAME=$(git symbolic-ref --short HEAD)
+	BRANCH_NAME="${BRANCH_NAME##*/}"
+	 
+	BRANCH_EXCLUDED=$(printf "%s\n" "${BRANCHES_TO_SKIP[@]}" | grep -c "^$BRANCH_NAME$")
+	BRANCH_IN_COMMIT=$(grep -c "\[$BRANCH_NAME\]" $1)
+	 
+	if [ -n "$BRANCH_NAME" ] && ! [[ $BRANCH_EXCLUDED -eq 1 ]] && ! [[ $BRANCH_IN_COMMIT -ge 1 ]]; then 
+
+		local type_commit="[P|H|A|M]"
+
+		local trimmed=$(echo $BRANCH_NAME | grep -o  "^([[:alpha:]]+)" | sed -e \
+			'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/')
+echo $trimmed
+exit 1
+
+		local ticket=
+		local pcode=$(git config --local hookie.project.code)
+		local phost=$(git config --local hookie.project.host)
+		local hostletter=
+
+		if [ "$phost" == "github" ]; then
+			hostletter="G"
+		elif [ "$Phost" == "bitbucket" ]; then
+			hostletter="B"
+		fi
+
+		ticket="$pcode--$hostletter"
+git symbolic-ref --short HEAD
+echo "$BRANCH_NAME"
+echo $ticket
+echo $trimmed
+
+
+
+		echo $(echo $trimmed | sed -e 's/^[^-]*-\([^-]\)-*[^-]*-.*/\1/' )
+
+
+		#sed  -e "1s/^/[$trimmed] /" $1
+		#sed -i.bak -e "1s/^/[$trimmed] /" $1
+		exit 1
+	fi
+}
+
+
+
+case "${1}" in
+    --about )
+        echo "Pre push a ticket based off the branch name"
+        ;;
+    * )
+        use_ticket=$(git config --local hookie.ticket.use)
+        if [ "$use_ticket" == "1" ] || [ "$use_ticket" == "true"]; then 
+            create_ticket_prefix "$@"
+        fi
+				unset use_ticket
+        ;;
+esac

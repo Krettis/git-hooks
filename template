@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function run_test
+{
+	exit 1
+}
+
+case "${1}" in
+	--about )
+		echo ""
+		;;
+	* )
+		run_test "$@"
+		;;
+esac

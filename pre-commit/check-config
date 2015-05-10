@@ -1,0 +1,56 @@
+#!/bin/sh
+
+function check_config
+{
+	local list=
+
+	# keys
+	local key_ticket_use="ticket.use"
+	
+	# values
+	local ticket_use=$(get_config "$key_ticket_use")
+
+	if [ -z "$ticket_use" ]; then
+		list+="- use of ticket "$(colorize "(--local hookie.$key_ticket_use)\n")
+	fi
+
+	if [ -z "$list" ]; then
+		if [ "$ticket_use" == "1" ] || [ "$ticket_use" == "true" ]; then
+			source "${HOME}/.git_hooks/pre-commit/helpers/config_project"
+			list=$(check_project_config)
+		fi
+	fi
+
+
+	if [ ! -z "$list" ]; then
+		echo "The following local git configuration is missing:\n"
+		echo "$list"
+		exit 1
+	fi
+}
+
+
+function colorize
+{
+	echo '\033[0;36m'$1'\033[0m' # No Color
+}
+
+
+function get_config
+{
+	local prefix="hookie."
+	local localconfig="git config --local ${prefix}"
+	local config=$($localconfig$1)
+	echo "$config"
+}
+
+
+
+case "${1}" in
+    --about )
+        echo "Validates if the message has a subject, body and decent character length"
+        ;;
+    * )
+        check_config
+        ;;
+esac
