@@ -1,0 +1,17 @@
+#!/bin/sh
+
+function validate_msg_body
+{
+	exec < /dev/tty
+	$HOME/.git_hooks/commit-msg/helpers/validate_msg_body.rb $1
+}
+
+
+case "${1}" in
+    --about )
+        echo "Validates if the message has a decent body and character length"
+        ;;
+    * )
+        validate_msg_body "$@"
+        ;;
+esac

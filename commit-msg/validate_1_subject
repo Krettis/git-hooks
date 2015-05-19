@@ -1,0 +1,17 @@
+#!/bin/sh
+
+function validate_msg_subject 
+{
+	exec < /dev/tty
+	$HOME/.git_hooks/commit-msg/helpers/validate_msg_subject.rb $1
+}
+
+
+case "${1}" in
+    --about )
+        echo "Validates if the message doesn't use wrong words"
+        ;;
+    * )
+        validate_msg_subject "$@"
+        ;;
+esac
