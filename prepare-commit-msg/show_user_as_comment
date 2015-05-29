@@ -1,0 +1,18 @@
+#!/bin/sh
+
+function show_user_in_comment
+{
+  local addComment="# Commit as user "$(git config user.name)" <"$(git config user.email)">"
+	sed -i.bak -e "\$a${addComment}" $1
+}
+
+
+
+case "${1}" in
+    --about )
+        echo "A little note in the comments under which user you are submitting"
+        ;;
+    * )
+        show_user_in_comment "$@"
+        ;;
+esac
