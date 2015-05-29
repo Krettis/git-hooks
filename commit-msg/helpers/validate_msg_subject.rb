@@ -12,7 +12,7 @@ def subject_forbidden_words(subject)
 end
 
 def imperative_first_word(word)
-  words = ['do', 'validate','allow','show', 'use', 'fix', 'setup', 'merge', 'handle', 'put']
+  words = ['do', 'validate','allow','show', 'use', 'fix', 'setup', 'merge', 'handle', 'put', 'state']
 
   error_msg = 'Error: First word is not imperative!' unless words.include? word
   
