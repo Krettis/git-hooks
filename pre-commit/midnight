@@ -3,9 +3,9 @@
 function midnight
 {
 	local currentHour=$(date +%H)
-	if [ "$currentHour" > 0 ] && [ "$currentHour" < 7 ]
+	if [ "$currentHour" -gt 0 ] && [ "$currentHour" -lt 7 ]
 	then
-		echo "Only commit during the day.\n\nGo to sleep!"
+		echo -e "Only commit during the day.\n\nGo to sleep!"
 		exit 1
 	fi
 }
