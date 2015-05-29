@@ -12,10 +12,10 @@ def subject_forbidden_words(subject)
 end
 
 def imperative_first_word(word)
-  words = ['do', 'don\'t','allow','show', 'use', 'fix', 'merge', 'handle', 'put']
+  words = ['do', 'don\'t','allow','show', 'use', 'fix', 'setup', 'merge', 'handle', 'put']
 
   error_msg = 'Error: First word is not imperative!' unless words.include? word
-
+  
   return error_msg
 end
 
@@ -31,8 +31,8 @@ while true
 
   words = subject.split(" ")
   if words.length > 1
-    first_word = (words.first[0] == '[') ? words[1] : words.first
-    no_imperative = imperative_first_word first_word
+    first_word = (words.first[0] =~ /[0-9]/ ) ? words[1] : words.first
+    no_imperative = false #imperative_first_word first_word
     errors.push no_imperative if no_imperative
   else
     errors.push "Git comment too short!"

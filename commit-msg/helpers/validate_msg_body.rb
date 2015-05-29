@@ -9,7 +9,7 @@ def check_format_rules(line_number, line)
   return "Error #{real_line_number}: First line should not end with a period" if line_number == 0 && line =~ /\.$/
   return "Error #{real_line_number}: First line should be capitalized." if line_number == 0 && !(line =~ /(^\[.*\] [A-Z]|^[A-Z])/)
   return "Error #{real_line_number}: First line should be less than 50 characters in length." if line_number == 0 && line.length > 50
-  return "Error #{real_line_number}: Second line should be empty." if line_number == 1 && line.length > 0
+  (return "Error #{real_line_number}: Second line should be empty." if line_number == 1 && line.length > 0 ) unless line[0,1]  == '#' 
   (return "Error #{real_line_number}: No line should be over 72 characters long." if line.length > 72) unless line[0,1]  == '#'
   false
 end
