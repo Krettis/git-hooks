@@ -48,7 +48,7 @@ function get_config
 
 case "${1}" in
     --about )
-        echo "Validates if the message has a subject, body and decent character length"
+        echo "Check if all the git hooks configuration has been set"
         ;;
     * )
         check_config
