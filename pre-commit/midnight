@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function midnight
+{
+	local currentHour=$(date +%H)
+	if [ "$currentHour" -gt 0 ] && [ "$currentHour" -lt 7 ]
+	then
+		echo -e "Only commit during the day.\n\nGo to sleep!"
+		exit 1
+	fi
+}
+
+case "${1}" in
+	--about )
+		echo "Midnight committing not allowed"
+		;;
+	* )
+		midnight
+		;;
+esac

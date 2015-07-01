@@ -2,8 +2,9 @@
 
 function show_user_in_comment
 {
-  local addComment="# Commit as user "$(git config user.name)" <"$(git config user.email)">"
-	sed -i.bak -e "\$a${addComment}" $1
+  local addComment="# Commit as user "$(git config user.name)"  < "$(git config user.email)" >"
+	sed -i.bak -e '$a\
+'"$addComment" $1
 }
 
 
