@@ -5,17 +5,20 @@
 
 function linting
 {
-  # PHPCS Linting
+# PHPCS Linting
   local PHP=$(which php)
-  local phpFilesStaged=$(git diff --name-only --cached -- *.php **/*.php)
-  local linted=$("$PHP" vendor/bin/phpcs --warning-severity=4 --error-severity=1 --standard="$1" "$phpFilesStaged")
+  local phpFilesStaged=$(git diff --name-only --cached -- '*.php' '**/*.php')
+  for file in $(echo "$phpFilesStaged" | tr " " "\n")
+  do
+    local linted=$("$PHP" vendor/bin/phpcs --warning-severity=4 --error-severity=1 --standard="$1" "$file")
 
-  if [ "$linted" ]
-  then
-    echo -e "FAILURE on phpcs linting: "
-    echo "$linted"
-    exit 1
-  fi
+    if [ "$linted" ]
+    then
+      echo -e "FAILURE on phpcs linting: "
+      echo "$linted"
+      exit 1
+    fi
+  done
 
   exit 0
 }
