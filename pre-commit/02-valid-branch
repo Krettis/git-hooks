@@ -1,0 +1,38 @@
+#!/bin/sh
+
+function check_branch
+{
+	local current_branch=
+
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$current_branch" == "master" ] || [ "$current_branch" == "develop" ]; then
+    colorize "Cannot commit in this branch '$current_branch', please change."
+    exit 1
+  fi
+}
+
+
+function colorize
+{
+	echo '\033[0;36m'$1'\033[0m' # No Color
+}
+
+
+function get_config
+{
+	local prefix="hookie."
+	local localconfig="git config --local ${prefix}"
+	local config=$($localconfig$1)
+	echo "$config"
+}
+
+
+
+case "${1}" in
+    --about )
+        echo "Check on the branch the commit is done"
+        ;;
+    * )
+        check_branch
+        ;;
+esac
